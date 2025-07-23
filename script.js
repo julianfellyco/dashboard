@@ -1,9 +1,4 @@
 <script>
-  let transactions = [
-    { desc: 'Salary', amount: 5000000 },
-    { desc: 'Groceries', amount: -1000000 }
-  ];
-
   const balanceEl = document.getElementById('balance');
   const incomeEl = document.getElementById('income');
   const expenseEl = document.getElementById('expense');
@@ -12,6 +7,12 @@
   const descInput = document.getElementById('desc');
   const amountInput = document.getElementById('amount');
   let chart;
+
+  // Ambil data dari localStorage atau buat default
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [
+    { desc: 'Salary', amount: 5000000 },
+    { desc: 'Groceries', amount: -1000000 }
+  ];
 
   function updateUI() {
     let total = 0, income = 0, expense = 0;
@@ -35,6 +36,7 @@
     incomeEl.textContent = `Rp ${income.toLocaleString()}`;
     expenseEl.textContent = `Rp ${expense.toLocaleString()}`;
 
+    localStorage.setItem('transactions', JSON.stringify(transactions));
     renderChart(income, expense);
   }
 
