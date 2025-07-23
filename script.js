@@ -1,20 +1,20 @@
-<script>
-  const balanceEl = document.getElementById('balance');
-  const incomeEl = document.getElementById('income');
-  const expenseEl = document.getElementById('expense');
-  const listEl = document.getElementById('transaction-list');
-  const form = document.getElementById('tx-form');
-  const descInput = document.getElementById('desc');
-  const amountInput = document.getElementById('amount');
-  let chart;
+const balanceEl = document.getElementById('balance');
+const incomeEl = document.getElementById('income');
+const expenseEl = document.getElementById('expense');
+const listEl = document.getElementById('transaction-list');
+const form = document.getElementById('tx-form');
+const descInput = document.getElementById('desc');
+const amountInput = document.getElementById('amount');
+const themeToggle = document.getElementById('theme-toggle');
+let chart;
 
-  // Ambil data dari localStorage atau buat default
-  let transactions = JSON.parse(localStorage.getItem('transactions')) || [
-    { desc: 'Salary', amount: 5000000 },
-    { desc: 'Groceries', amount: -1000000 }
-  ];
+// Load transactions
+let transactions = JSON.parse(localStorage.getItem('transactions')) || [
+  { desc: 'Salary', amount: 5000000 },
+  { desc: 'Groceries', amount: -1000000 }
+];
 
-  function updateUI() {
+function updateUI() {
   let total = 0, income = 0, expense = 0;
   listEl.innerHTML = '';
 
@@ -43,49 +43,65 @@
   renderChart(income, expense);
 }
 
-  function renderChart(income, expense) {
-    const ctx = document.getElementById('financeChart').getContext('2d');
-    if (chart) chart.destroy();
+function renderChart(income, expense) {
+  const ctx = document.getElementById('financeChart').getContext('2d');
+  if (chart) chart.destroy();
 
-    chart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Income', 'Expense'],
-        datasets: [{
-          data: [income, expense],
-          backgroundColor: ['#16a34a', '#dc2626']
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              color: document.body.classList.contains('dark') ? 'white' : 'black'
-            }
+  chart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Income', 'Expense'],
+      datasets: [{
+        data: [income, expense],
+        backgroundColor: ['#16a34a', '#dc2626']
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: document.body.classList.contains('dark') ? 'white' : 'black'
           }
         }
       }
-    });
-  }
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const desc = descInput.value.trim();
-    const amount = +amountInput.value;
-
-    if (!desc || isNaN(amount)) return alert("Please enter valid data");
-
-    transactions.push({ desc, amount });
-    descInput.value = '';
-    amountInput.value = '';
-    updateUI();
+    }
   });
-  function removeTx(index) {
-  transactions.splice(index, 1); // hapus transaksi ke-index
-  updateUI(); // refresh tampilan dan simpan ulang
 }
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const desc = descInput.value.trim();
+  const amount = +amountInput.value;
+
+  if (!desc || isNaN(amount)) return alert("Please enter valid data");
+
+  transactions.push({ desc, amount });
+  descInput.value = '';
+  amountInput.value = '';
   updateUI();
-</script>
+});
+
+function removeTx(index) {
+  transactions.splice(index, 1);
+  updateUI();
+}
+
+// Theme Handling
+const userPref = localStorage.getItem('theme');
+if (userPref === 'dark') {
+  document.body.classList.add('dark');
+  themeToggle.textContent = '🌞 Light Mode';
+}
+
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  themeToggle.textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  updateUI(); // re-render chart with correct label color
+});
+
+updateUI();
