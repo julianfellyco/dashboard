@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard – Julian Fellyco</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,33 +12,34 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition duration-300">
 
-  <!-- Toggle Theme -->
   <div class="flex justify-end p-4">
     <button id="theme-toggle" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
       🌙 Dark Mode
     </button>
   </div>
 
-  <!-- Header -->
   <header class="text-center py-6">
     <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Personal Finance Dashboard</h1>
     <p class="text-sm text-gray-500 dark:text-gray-300">Built by Julian Fellyco</p>
   </header>
 
-  <!-- Add Transaction Form -->
-  <section class="max-w-4xl mx-auto px-4 py-6 mb-4">
+  <section class="max-w-5xl mx-auto px-4 py-6 mb-4">
     <h2 class="text-xl font-semibold mb-2">Add Transaction</h2>
-    <form id="tx-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-      <input type="text" id="desc" placeholder="Description"
-        class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
-      <input type="number" id="amount" placeholder="Amount (use minus for expense)"
-        class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
-      <button type="submit"
-        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Add</button>
+    <form id="tx-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+      <input type="text" id="desc" placeholder="Description" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
+      <select id="category" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+        <option value="">Select Category</option>
+        <option value="Income">Income</option>
+        <option value="Food">Food</option>
+        <option value="Transport">Transport</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Others">Others</option>
+      </select>
+      <input type="number" id="amount" placeholder="Amount" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Add</button>
     </form>
   </section>
 
-  <!-- Summary Cards -->
   <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-5xl mx-auto px-4 py-6">
     <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
       <h2 class="text-sm text-gray-500">Total Balance</h2>
@@ -54,29 +55,23 @@
     </div>
   </section>
 
-  <!-- Chart -->
   <section class="max-w-4xl mx-auto px-4 py-6">
     <canvas id="financeChart" class="bg-white dark:bg-gray-800 p-4 rounded shadow w-full h-[300px] sm:h-[350px]"></canvas>
   </section>
 
-  <!-- Recent Transactions -->
   <section class="max-w-4xl mx-auto px-4 py-6">
     <h2 class="text-xl font-semibold mb-2">Recent Transactions</h2>
     <div class="flex justify-end gap-2 mb-4">
-  <button id="reset-btn" class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-    🔄 Reset All
-  </button>
-  <button id="export-btn" class="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-    📁 Download CSV
-  </button>
-</div>
-
-    <ul id="transaction-list" class="space-y-3 text-sm sm:text-base">
-      <!-- Transactions will be rendered here -->
-    </ul>
+      <button id="reset-btn" class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+        🔄 Reset All
+      </button>
+      <button id="export-btn" class="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+        📁 Download CSV
+      </button>
+    </div>
+    <ul id="transaction-list" class="space-y-3 text-sm sm:text-base"></ul>
   </section>
 
-  <!-- Main JS -->
   <script src="script.js"></script>
 </body>
 </html>
