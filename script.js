@@ -5,13 +5,15 @@ const listEl = document.getElementById('transaction-list');
 const form = document.getElementById('tx-form');
 const descInput = document.getElementById('desc');
 const amountInput = document.getElementById('amount');
+const categoryInput = document.getElementById('category');
 const themeToggle = document.getElementById('theme-toggle');
-let chart;
+const resetBtn = document.getElementById('reset-btn');
+const exportBtn = document.getElementById('export-btn');
 
-// Load transactions
+let chart;
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [
-  { desc: 'Salary', amount: 5000000 },
-  { desc: 'Groceries', amount: -1000000 }
+  { desc: 'Salary', category: 'Income', amount: 5000000 },
+  { desc: 'Groceries', category: 'Food', amount: -1000000 }
 ];
 
 function updateUI() {
@@ -22,7 +24,10 @@ function updateUI() {
     const li = document.createElement('li');
     li.className = 'flex justify-between items-center bg-white dark:bg-gray-800 px-4 py-2 rounded shadow-sm';
     li.innerHTML = `
-      <span>${tx.desc}</span>
+      <div>
+        <div class="font-medium">${tx.desc}</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400">${tx.category}</div>
+      </div>
       <div class="flex items-center gap-2">
         <span class="${tx.amount < 0 ? 'text-red-500' : 'text-green-500'}">Rp${tx.amount.toLocaleString()}</span>
         <button onclick="removeTx(${index})" class="text-gray-400 hover:text-red-600">❌</button>
@@ -75,15 +80,21 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   const desc = descInput.value.trim();
   const amount = +amountInput.value;
+  const category = categoryInput.value;
 
-  if (!desc || isNaN(amount)) return alert("Please enter valid data");
+  if (!desc || isNaN(amount) || !category) return alert("Please complete all fields");
 
-  transactions.push({ desc, amount });
+  transactions.push({ desc, category, amount });
   descInput.value = '';
   amountInput.value = '';
+  categoryInput.value = '';
   updateUI();
 });
-const resetBtn = document.getElementById('reset-btn');
+
+function removeTx(index) {
+  transactions.splice(index, 1);
+  updateUI();
+}
 
 resetBtn.addEventListener('click', () => {
   if (confirm("Are you sure you want to delete all transactions?")) {
@@ -93,21 +104,13 @@ resetBtn.addEventListener('click', () => {
   }
 });
 
-function removeTx(index) {
-  transactions.splice(index, 1);
-  updateUI();
-}
-const exportBtn = document.getElementById('export-btn');
-
 exportBtn.addEventListener('click', () => {
   if (transactions.length === 0) {
     alert("No data to export!");
     return;
   }
-
-  const csvContent = "data:text/csv;charset=utf-8," + 
-    ["Description,Amount", ...transactions.map(tx => `"${tx.desc}",${tx.amount}`)].join("\n");
-
+  const csvContent = "data:text/csv;charset=utf-8," +
+    ["Description,Category,Amount", ...transactions.map(tx => `"${tx.desc}","${tx.category}",${tx.amount}`)].join("\n");
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -117,8 +120,7 @@ exportBtn.addEventListener('click', () => {
   document.body.removeChild(link);
 });
 
-
-// Theme Handling
+// Theme toggle
 const userPref = localStorage.getItem('theme');
 if (userPref === 'dark') {
   document.body.classList.add('dark');
@@ -130,7 +132,7 @@ themeToggle.addEventListener('click', () => {
   const isDark = document.body.classList.contains('dark');
   themeToggle.textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateUI(); // re-render chart with correct label color
+  updateUI();
 });
 
 updateUI();
