@@ -83,6 +83,15 @@ form.addEventListener('submit', (e) => {
   amountInput.value = '';
   updateUI();
 });
+const resetBtn = document.getElementById('reset-btn');
+
+resetBtn.addEventListener('click', () => {
+  if (confirm("Are you sure you want to delete all transactions?")) {
+    transactions = [];
+    localStorage.removeItem('transactions');
+    updateUI();
+  }
+});
 
 function removeTx(index) {
   transactions.splice(index, 1);
