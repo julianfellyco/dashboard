@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – Julian Fellyco</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition duration-300">
+
+  <!-- Toggle Theme -->
+  <div class="flex justify-end p-4">
+    <button id="theme-toggle" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
+      🌙 Dark Mode
+    </button>
+  </div>
+
+  <!-- Header -->
+  <header class="text-center py-6">
+    <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Personal Finance Dashboard</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-300">Built by Julian Fellyco</p>
+  </header>
+
+  <!-- Summary Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto px-4 py-6">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
+      <h2 class="text-sm text-gray-500">Total Balance</h2>
+      <p id="balance" class="text-2xl font-semibold mt-2">Rp 0</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
+      <h2 class="text-sm text-gray-500">Income</h2>
+      <p id="income" class="text-green-500 text-2xl font-semibold mt-2">Rp 0</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
+      <h2 class="text-sm text-gray-500">Expense</h2>
+      <p id="expense" class="text-red-500 text-2xl font-semibold mt-2">Rp 0</p>
+    </div>
+  </section>
+
+  <!-- Chart -->
+  <section class="max-w-4xl mx-auto px-4 py-6">
+    <canvas id="financeChart" class="bg-white dark:bg-gray-800 p-4 rounded shadow h-72"></canvas>
+  </section>
+
+  <!-- Recent Transactions -->
+  <section class="max-w-4xl mx-auto px-4 py-6">
+    <h2 class="text-xl font-semibold mb-2">Recent Transactions</h2>
+    <ul id="transaction-list" class="space-y-2">
+      <!-- Transactions will be rendered here -->
+    </ul>
+  </section>
+
+  <!-- Script Section -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const userPref = localStorage.getItem('theme');
+    if (userPref === 'dark') {
+      document.body.classList.add('dark');
+      themeToggle.textContent = '🌞 Light Mode';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      themeToggle.textContent = isDark ? '🌞 Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>
