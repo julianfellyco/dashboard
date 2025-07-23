@@ -15,12 +15,19 @@ let transactions = JSON.parse(localStorage.getItem('transactions')) || [
   { desc: 'Salary', category: 'Income', amount: 5000000 },
   { desc: 'Groceries', category: 'Food', amount: -1000000 }
 ];
+const filterCategory = document.getElementById('filter-category');
 
 function updateUI() {
   let total = 0, income = 0, expense = 0;
   listEl.innerHTML = '';
 
-  transactions.forEach((tx, index) => {
+  const selectedCategory = filterCategory.value;
+
+  const filteredTx = selectedCategory === 'all'
+    ? transactions
+    : transactions.filter(tx => tx.category === selectedCategory);
+
+  filteredTx.forEach((tx, index) => {
     const li = document.createElement('li');
     li.className = 'flex justify-between items-center bg-white dark:bg-gray-800 px-4 py-2 rounded shadow-sm';
     li.innerHTML = `
@@ -43,10 +50,9 @@ function updateUI() {
   balanceEl.textContent = `Rp ${total.toLocaleString()}`;
   incomeEl.textContent = `Rp ${income.toLocaleString()}`;
   expenseEl.textContent = `Rp ${expense.toLocaleString()}`;
-
-  localStorage.setItem('transactions', JSON.stringify(transactions));
   renderChart(income, expense);
 }
+
 
 function renderChart(income, expense) {
   const ctx = document.getElementById('financeChart').getContext('2d');
