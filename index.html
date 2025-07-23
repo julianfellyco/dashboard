@@ -57,6 +57,18 @@
       <!-- Transactions will be rendered here -->
     </ul>
   </section>
+  <!-- Add Transaction Form -->
+<section class="max-w-4xl mx-auto px-4 py-6">
+  <h2 class="text-xl font-semibold mb-2">Add Transaction</h2>
+  <form id="tx-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+    <input type="text" id="desc" placeholder="Description"
+      class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
+    <input type="number" id="amount" placeholder="Amount (use minus for expense)"
+      class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
+    <button type="submit"
+      class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Add</button>
+  </form>
+</section>
 
   <!-- Script Section -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
