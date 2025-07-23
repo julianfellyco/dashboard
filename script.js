@@ -52,7 +52,7 @@ function updateUI() {
   expenseEl.textContent = `Rp ${expense.toLocaleString()}`;
   renderChart(income, expense);
 }
-
+filterCategory.addEventListener('change', updateUI);
 
 function renderChart(income, expense) {
   const ctx = document.getElementById('financeChart').getContext('2d');
