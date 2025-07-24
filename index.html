@@ -1,93 +1,139 @@
+
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard – Julian Fellyco</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { darkMode: 'class' }
+    tailwind.config = { 
+      darkMode: 'class',
+      theme: {
+        extend: {
+          screens: {
+            'xs': '475px',
+          }
+        }
+      }
+    }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Smooth transitions for all elements */
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition duration-300">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white min-h-screen">
 
-  <div class="flex justify-end p-4">
-    <button id="theme-toggle" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
-      🌙 Dark Mode
+  <!-- Theme Toggle - Fixed position on mobile, top-right on desktop -->
+  <div class="fixed top-4 right-4 z-50 sm:relative sm:flex sm:justify-end sm:p-4">
+    <button id="theme-toggle" class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 px-3 py-2 sm:px-4 sm:py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-sm sm:text-base">
+      <span class="hidden sm:inline">🌙 Dark Mode</span>
+      <span class="sm:hidden">🌙</span>
     </button>
   </div>
 
-  <header class="text-center py-6">
-    <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Personal Finance Dashboard</h1>
-    <p class="text-sm text-gray-500 dark:text-gray-300">Built by Julian Fellyco</p>
+  <!-- Header - Responsive typography and spacing -->
+  <header class="text-center py-4 sm:py-6 px-4">
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+      Personal Finance Dashboard
+    </h1>
+    <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">Built by Julian Fellyco</p>
   </header>
 
-  <section class="max-w-5xl mx-auto px-4 py-6 mb-4">
-    <h2 class="text-xl font-semibold mb-2">Add Transaction</h2>
-    <form id="tx-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-      <input type="text" id="desc" placeholder="Description" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
-      <select id="category" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
+  <!-- Add Transaction Form - Fully responsive -->
+  <section class="max-w-6xl mx-auto px-4 py-4 sm:py-6 mb-4">
+    <h2 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Add Transaction</h2>
+    <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <input type="text" id="desc" placeholder="Description" 
+        class="px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm sm:text-base" required>
+      
+      <select id="category" 
+        class="px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm sm:text-base">
         <option value="">Select Category</option>
-        <option value="Income">Income</option>
-        <option value="Food">Food</option>
-        <option value="Transport">Transport</option>
-        <option value="Shopping">Shopping</option>
-        <option value="Others">Others</option>
+        <option value="Income">💰 Income</option>
+        <option value="Food">🍕 Food</option>
+        <option value="Transport">🚗 Transport</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Others">📦 Others</option>
       </select>
-      <input type="number" id="amount" placeholder="Amount" class="px-4 py-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800" required>
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Add</button>
+      
+      <input type="number" id="amount" placeholder="Amount" 
+        class="px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm sm:text-base" required>
+      
+      <button type="submit" 
+        class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white py-2 sm:py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium text-sm sm:text-base">
+        ➕ Add
+      </button>
     </form>
   </section>
 
-  <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-5xl mx-auto px-4 py-6">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 class="text-sm text-gray-500">Total Balance</h2>
-      <p id="balance" class="text-2xl font-semibold mt-2">Rp 0</p>
+  <!-- Balance Cards - Responsive grid -->
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-6xl mx-auto px-4 py-4 sm:py-6">
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-gray-700">
+      <h2 class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Total Balance</h2>
+      <p id="balance" class="text-xl sm:text-2xl lg:text-3xl font-bold mt-2 text-gray-900 dark:text-white">Rp 0</p>
     </div>
-    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 class="text-sm text-gray-500">Income</h2>
-      <p id="income" class="text-green-500 text-2xl font-semibold mt-2">Rp 0</p>
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-gray-700">
+      <h2 class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Income</h2>
+      <p id="income" class="text-green-600 dark:text-green-400 text-xl sm:text-2xl lg:text-3xl font-bold mt-2">Rp 0</p>
     </div>
-    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow">
-      <h2 class="text-sm text-gray-500">Expense</h2>
-      <p id="expense" class="text-red-500 text-2xl font-semibold mt-2">Rp 0</p>
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-gray-700">
+      <h2 class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide">Expense</h2>
+      <p id="expense" class="text-red-600 dark:text-red-400 text-xl sm:text-2xl lg:text-3xl font-bold mt-2">Rp 0</p>
     </div>
   </section>
 
-  <section class="max-w-4xl mx-auto px-4 py-6">
-    <canvas id="financeChart" class="bg-white dark:bg-gray-800 p-4 rounded shadow w-full h-[300px] sm:h-[350px]"></canvas>
-  </section>
-
-  <section class="max-w-4xl mx-auto px-4 py-6">
-    
-    <div class="flex justify-end gap-2 mb-4">
-      <button id="reset-btn" class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-        🔄 Reset All
-      </button>
-      <button id="export-btn" class="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-        📁 Download CSV
-      </button>
+  <!-- Chart Section - Responsive height -->
+  <section class="max-w-5xl mx-auto px-4 py-4 sm:py-6">
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+      <canvas id="financeChart" class="w-full h-[250px] sm:h-[300px] lg:h-[350px]"></canvas>
     </div>
-    <div class="flex justify-between items-center mb-4">
-  <h2 class="text-xl font-semibold">Recent Transactions</h2>
-  <select id="filter-category" class="text-sm px-2 py-1 rounded border border-gray-300 dark:border-gray-700 dark:bg-gray-800">
-    <option value="all">All Categories</option>
-    <option value="Income">Income</option>
-    <option value="Food">Food</option>
-    <option value="Transport">Transport</option>
-    <option value="Shopping">Shopping</option>
-    <option value="Others">Others</option>
-  </select>
-</div>
-
-    <ul id="transaction-list" class="space-y-3 text-sm sm:text-base"></ul>
   </section>
 
+  <!-- Transactions Section -->
+  <section class="max-w-5xl mx-auto px-4 py-4 sm:py-6">
+    <!-- Action Buttons - Responsive layout -->
+    <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 sm:mb-6">
+      <div class="flex gap-2 order-2 sm:order-1">
+        <button id="reset-btn" class="flex-1 sm:flex-none text-xs sm:text-sm bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+          🔄 Reset All
+        </button>
+        <button id="export-btn" class="flex-1 sm:flex-none text-xs sm:text-sm bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+          📁 Download CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Header and Filter - Responsive -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <h2 class="text-lg sm:text-xl font-semibold">Recent Transactions</h2>
+      <select id="filter-category" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
+        <option value="all">All Categories</option>
+        <option value="Income">💰 Income</option>
+        <option value="Food">🍕 Food</option>
+        <option value="Transport">🚗 Transport</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Others">📦 Others</option>
+      </select>
+    </div>
+
+    <!-- Transactions List - Responsive items -->
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <ul id="transaction-list" class="divide-y divide-gray-200 dark:divide-gray-700"></ul>
+      <div id="empty-state" class="hidden p-8 text-center text-gray-500 dark:text-gray-400">
+        <div class="text-4xl mb-2">📝</div>
+        <p class="text-sm sm:text-base">No transactions yet. Add your first transaction above!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer spacing -->
+  <div class="h-8 sm:h-16"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="script.js"></script>
-  
-
 </body>
 </html>
