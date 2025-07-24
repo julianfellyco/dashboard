@@ -125,6 +125,17 @@ exportBtn.addEventListener('click', () => {
   link.click();
   document.body.removeChild(link);
 });
+const txData = {
+  desc,
+  category,
+  amount,
+  date: new Date().toISOString()
+};
+
+transactions.push(txData);
+await supabase.from("transactions").insert([txData]); // ⬆️ simpan ke Supabase
+updateUI();
+
 
 // Theme toggle
 const userPref = localStorage.getItem('theme');
