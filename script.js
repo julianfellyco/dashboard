@@ -11,10 +11,25 @@ const resetBtn = document.getElementById('reset-btn');
 const exportBtn = document.getElementById('export-btn');
 
 let chart;
-let transactions = JSON.parse(localStorage.getItem('transactions')) || [
-  { desc: 'Salary', category: 'Income', amount: 5000000 },
-  { desc: 'Groceries', category: 'Food', amount: -1000000 }
-];
+let transactions = [];
+
+async function loadFromSupabase() {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*')
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error("Supabase error:", error);
+    return;
+  }
+
+  transactions = data;
+  updateUI();
+}
+
+loadFromSupabase();
+
 const filterCategory = document.getElementById('filter-category');
 
 function updateUI() {
@@ -135,25 +150,6 @@ const txData = {
 transactions.push(txData);
 await supabase.from("transactions").insert([txData]); // ⬆️ simpan ke Supabase
 updateUI();
-
-let transactions = [];
-
-async function loadFromSupabase() {
-  const { data, error } = await supabase
-    .from('transactions')
-    .select('*')
-    .order('date', { ascending: false });
-
-  if (error) {
-    console.error("Supabase error:", error);
-    return;
-  }
-
-  transactions = data;
-  updateUI();
-}
-
-loadFromSupabase();
 
 // Theme toggle
 const userPref = localStorage.getItem('theme');
