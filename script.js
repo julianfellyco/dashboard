@@ -1,9 +1,8 @@
 // Initialize Supabase
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = 'https://axhvrjivepslousbzooi.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = window.supabase.createClient(
+  'https://axhvrjivepslousbzooi.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4aHZyaml2ZXBzbG91c2J6b29pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzE0MDMsImV4cCI6MjA2ODkwNzQwM30.NtJPdCXZKgcXYz3whPgiVZC4_OTSHiBY4rDXcSFLPYs'
+);
 
 // DOM Elements
 const balanceEl = document.getElementById('balance');
