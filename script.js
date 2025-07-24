@@ -9,6 +9,8 @@ const categoryInput = document.getElementById('category');
 const themeToggle = document.getElementById('theme-toggle');
 const resetBtn = document.getElementById('reset-btn');
 const exportBtn = document.getElementById('export-btn');
+const filterCategory = document.getElementById('filter-category');
+const filterMonth = document.getElementById('filter-month'); // kalau ada
 
 let chart;
 let transactions = [];
@@ -20,7 +22,7 @@ async function loadFromSupabase() {
     .order('date', { ascending: false });
 
   if (error) {
-    console.error("Supabase error:", error);
+    console.error('Error loading:', error.message);
     return;
   }
 
@@ -28,19 +30,19 @@ async function loadFromSupabase() {
   updateUI();
 }
 
-loadFromSupabase();
-
-const filterCategory = document.getElementById('filter-category');
-
 function updateUI() {
   let total = 0, income = 0, expense = 0;
   listEl.innerHTML = '';
 
-  const selectedCategory = filterCategory.value;
+  const selectedCategory = filterCategory?.value || 'all';
+  const selectedMonth = filterMonth?.value || 'all';
 
-  const filteredTx = selectedCategory === 'all'
-    ? transactions
-    : transactions.filter(tx => tx.category === selectedCategory);
+  const filteredTx = transactions.filter(tx => {
+    const txMonth = tx.date?.slice(0, 7);
+    const categoryMatch = selectedCategory === 'all' || tx.category === selectedCategory;
+    const monthMatch = selectedMonth === 'all' || txMonth === selectedMonth;
+    return categoryMatch && monthMatch;
+  });
 
   filteredTx.forEach((tx, index) => {
     const li = document.createElement('li');
@@ -52,7 +54,7 @@ function updateUI() {
       </div>
       <div class="flex items-center gap-2">
         <span class="${tx.amount < 0 ? 'text-red-500' : 'text-green-500'}">Rp${tx.amount.toLocaleString()}</span>
-        <button onclick="removeTx(${index})" class="text-gray-400 hover:text-red-600">❌</button>
+        <button onclick="removeTx('${tx.id}')" class="text-gray-400 hover:text-red-600">❌</button>
       </div>
     `;
     listEl.appendChild(li);
@@ -67,12 +69,15 @@ function updateUI() {
   expenseEl.textContent = `Rp ${expense.toLocaleString()}`;
   renderChart(income, expense);
 }
-filterCategory.addEventListener('change', updateUI);
+
+async function removeTx(id) {
+  await supabase.from("transactions").delete().eq("id", id);
+  await loadFromSupabase();
+}
 
 function renderChart(income, expense) {
   const ctx = document.getElementById('financeChart').getContext('2d');
   if (chart) chart.destroy();
-
   chart = new Chart(ctx, {
     type: 'pie',
     data: {
@@ -97,7 +102,7 @@ function renderChart(income, expense) {
   });
 }
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const desc = descInput.value.trim();
   const amount = +amountInput.value;
@@ -105,33 +110,33 @@ form.addEventListener('submit', (e) => {
 
   if (!desc || isNaN(amount) || !category) return alert("Please complete all fields");
 
-  transactions.push({ desc, category, amount });
+  const txData = {
+    desc,
+    category,
+    amount,
+    date: new Date().toISOString()
+  };
+
+  await supabase.from("transactions").insert([txData]);
+
   descInput.value = '';
   amountInput.value = '';
   categoryInput.value = '';
-  updateUI();
+  await loadFromSupabase();
 });
 
-function removeTx(index) {
-  transactions.splice(index, 1);
-  updateUI();
-}
-
-resetBtn.addEventListener('click', () => {
+resetBtn.addEventListener('click', async () => {
   if (confirm("Are you sure you want to delete all transactions?")) {
-    transactions = [];
-    localStorage.removeItem('transactions');
-    updateUI();
+    await supabase.from("transactions").delete().neq('id', '');
+    await loadFromSupabase();
   }
 });
 
 exportBtn.addEventListener('click', () => {
-  if (transactions.length === 0) {
-    alert("No data to export!");
-    return;
-  }
+  if (transactions.length === 0) return alert("No data to export!");
   const csvContent = "data:text/csv;charset=utf-8," +
-    ["Description,Category,Amount", ...transactions.map(tx => `"${tx.desc}","${tx.category}",${tx.amount}`)].join("\n");
+    ["Description,Category,Amount,Date", ...transactions.map(tx =>
+      `"${tx.desc}","${tx.category}",${tx.amount},"${tx.date}"`)].join("\n");
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -140,23 +145,6 @@ exportBtn.addEventListener('click', () => {
   link.click();
   document.body.removeChild(link);
 });
-const txData = {
-  desc,
-  category,
-  amount,
-  date: new Date().toISOString()
-};
-
-transactions.push(txData);
-await supabase.from("transactions").insert([txData]); // ⬆️ simpan ke Supabase
-updateUI();
-
-// Theme toggle
-const userPref = localStorage.getItem('theme');
-if (userPref === 'dark') {
-  document.body.classList.add('dark');
-  themeToggle.textContent = '🌞 Light Mode';
-}
 
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark');
@@ -166,4 +154,12 @@ themeToggle.addEventListener('click', () => {
   updateUI();
 });
 
-updateUI();
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+  themeToggle.textContent = '🌞 Light Mode';
+}
+
+filterCategory?.addEventListener('change', updateUI);
+filterMonth?.addEventListener('change', updateUI);
+
+loadFromSupabase();
