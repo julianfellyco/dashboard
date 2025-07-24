@@ -136,6 +136,24 @@ transactions.push(txData);
 await supabase.from("transactions").insert([txData]); // ⬆️ simpan ke Supabase
 updateUI();
 
+let transactions = [];
+
+async function loadFromSupabase() {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*')
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error("Supabase error:", error);
+    return;
+  }
+
+  transactions = data;
+  updateUI();
+}
+
+loadFromSupabase();
 
 // Theme toggle
 const userPref = localStorage.getItem('theme');
